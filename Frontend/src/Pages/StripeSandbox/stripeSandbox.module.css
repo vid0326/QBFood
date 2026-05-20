@@ -1,0 +1,246 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
+  background: radial-gradient(circle at top, #0f1020 0%, #06060c 100%);
+  font-family: 'Inter', sans-serif;
+  color: #f1f5f9;
+}
+
+.stripeCard {
+  width: 100%;
+  max-width: 520px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+              0 0 60px rgba(249, 115, 22, 0.04);
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.stripeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 28px;
+  background: rgba(255, 255, 255, 0.01);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stripeLogo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stripeIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 26px;
+  height: 26px;
+  background: #635bff;
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.stripeText {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.sandboxBadge {
+  font-size: 10px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.orderSummary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.orderLabel {
+  font-size: 10px;
+  color: #78716c;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.orderAmount {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f97316;
+  letter-spacing: -0.03em;
+}
+
+/* ── Form ── */
+.paymentForm {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.paymentForm h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  font-size: 13px;
+  color: #78716c;
+  line-height: 1.5;
+  margin: 0 0 22px 0;
+}
+
+.description strong {
+  color: #d6d3d1;
+}
+
+.testHint {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  color: #57534e;
+  font-style: italic;
+}
+
+/* ── Stripe Element container ── */
+.stripeElementWrapper {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+/* ── Error ── */
+.errorBanner {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+/* ── Buttons ── */
+.payBtn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.payBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
+}
+
+.payBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancelBtn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #78716c;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelBtn:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #a8a29e;
+}
+
+.cancelBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Processing spinner ── */
+.btnSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* ── Loading state ── */
+.processingContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+  gap: 16px;
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(99, 91, 255, 0.15);
+  border-top-color: #635bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.processingMsg {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.processingSub {
+  font-size: 12px;
+  color: #57534e;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

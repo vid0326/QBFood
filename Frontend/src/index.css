@@ -1,0 +1,217 @@
+/* =============================================
+   QUICKBITE GLOBAL DESIGN SYSTEM
+   ============================================= */
+
+/* --- Google Fonts are loaded in index.html --- */
+
+/* --- CSS Custom Properties (Design Tokens) --- */
+:root {
+  --clr-bg-primary: #0a0a0f;
+  --clr-bg-secondary: #111118;
+  --clr-bg-card: #16161f;
+  --clr-bg-glass: rgba(255, 255, 255, 0.04);
+  --clr-border-glass: rgba(255, 255, 255, 0.08);
+  --clr-accent: #f97316;       /* Vibrant orange - primary CTA */
+  --clr-accent-alt: #fb923c;
+  --clr-accent-glow: rgba(249, 115, 22, 0.25);
+  --clr-yellow: #facc15;
+  --clr-text-primary: #f1f5f9;
+  --clr-text-secondary: #94a3b8;
+  --clr-text-muted: #475569;
+  --clr-success: #22c55e;
+  --clr-error: #ef4444;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+  --shadow-glow: 0 0 30px rgba(249, 115, 22, 0.15);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Space Grotesk', 'Inter', sans-serif;
+  --transition-fast: 0.18s ease;
+  --transition-med: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--clr-bg-primary);
+  color: var(--clr-text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  /* Subtle noise texture overlay */
+  background-image: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(249, 115, 22, 0.07) 0%, transparent 60%);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* --- App Container --- */
+.app {
+  width: 92%;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--clr-bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--clr-accent); border-radius: 3px; }
+
+/* --- Global Select Override (fix white browser dropdown) --- */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: rgba(255, 255, 255, 0.04);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23f97316' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  color: var(--clr-text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 8px 36px 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+select:focus {
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.08);
+}
+select:hover { border-color: rgba(249, 115, 22, 0.3); }
+
+/* Style the dropdown options (Chromium only — Firefox ignores these) */
+select option {
+  background-color: #1a1a24;
+  color: var(--clr-text-primary);
+  font-size: 13px;
+  padding: 10px;
+}
+select option:checked,
+select option:hover {
+  background-color: rgba(249, 115, 22, 0.25);
+  color: #f97316;
+}
+
+/* --- Input global base --- */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="tel"],
+textarea {
+  font-family: var(--font-body);
+}
+
+/* --- Global Button Styles --- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--clr-accent), #ea580c);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: var(--transition-med);
+  box-shadow: 0 4px 20px var(--clr-accent-glow);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--clr-accent-glow);
+}
+
+/* --- Section Heading --- */
+.section-heading {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--clr-text-primary);
+  margin-bottom: 8px;
+}
+
+.section-heading span {
+  color: var(--clr-accent);
+}
+
+/* --- Divider --- */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--clr-border-glass);
+  margin: 10px 0 30px;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 15px var(--clr-accent-glow); }
+  50%       { box-shadow: 0 0 35px rgba(249, 115, 22, 0.45); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* --- Loading Skeleton --- */
+.skeleton {
+  background: linear-gradient(90deg, var(--clr-bg-card) 25%, var(--clr-bg-glass) 50%, var(--clr-bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* --- Glassmorphism utility --- */
+.glass {
+  background: var(--clr-bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--clr-border-glass);
+}
+
+/* --- Responsive helpers --- */
+@media (max-width: 768px) {
+  .app {
+    width: 95%;
+  }
+  .desktop-only { display: none !important; }
+}
+@media (min-width: 769px) {
+  .mobile-only { display: none !important; }
+}

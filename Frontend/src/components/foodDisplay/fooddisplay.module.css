@@ -1,0 +1,78 @@
+/* ===================================================
+   FOOD DISPLAY — Section + Grid
+   =================================================== */
+
+.FoodDisplay {
+  margin-top: 20px;
+  padding-bottom: 80px;
+}
+
+.FoodDisplayHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.FoodDisplay h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: -0.025em;
+}
+
+.resultCount {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f97316;
+  background: rgba(249,115,22,0.08);
+  border: 1px solid rgba(249,115,22,0.2);
+  padding: 5px 14px;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+}
+
+.FoodDisplayList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+/* ── No results / Empty state ── */
+.emptyState {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 80px 20px;
+  text-align: center;
+}
+.emptyState > span:first-child {
+  font-size: 4rem;
+  animation: wobble 2s ease-in-out infinite;
+}
+.emptyState > p {
+  font-size: 16px;
+  font-weight: 600;
+  color: #44403c;
+}
+.emptyHint {
+  font-size: 13px;
+  color: #292524;
+}
+
+@keyframes wobble {
+  0%,100% { transform: rotate(-5deg); }
+  50%      { transform: rotate(5deg); }
+}
+
+@media (max-width: 600px) {
+  .FoodDisplayList {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+}

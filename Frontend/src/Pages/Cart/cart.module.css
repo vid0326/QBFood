@@ -1,0 +1,197 @@
+/* ===== CART PAGE ===== */
+.Cart {
+  padding: 50px 0 80px;
+}
+
+.Cart h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 30px;
+}
+
+.CartItems {
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 24px;
+  overflow-x: auto;
+}
+
+.CartItemsTitle {
+  display: grid;
+  grid-template-columns: 1fr 1.8fr 1fr 1fr 1fr 0.5fr;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.CartItemsItem {
+  margin: 0;
+  color: #f1f5f9;
+  font-size: 14px;
+  transition: background 0.15s;
+  border-radius: 10px;
+  padding: 4px 8px;
+}
+.CartItemsItem:hover { background: rgba(255, 255, 255, 0.03); }
+
+.CartItemsItem img {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.Cart hr {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  margin: 4px 0;
+}
+
+.Cross {
+  cursor: pointer;
+  color: #ef4444;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.Cross:hover { transform: scale(1.3); }
+
+/* Bottom section */
+.CartBottom {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+/* Totals card */
+.CartTotal {
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.CartTotal h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 0;
+}
+
+.CartTotalDetails {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #94a3b8;
+}
+.CartTotalDetails b {
+  font-size: 16px;
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+.CartTotal hr {
+  background: rgba(255, 255, 255, 0.06);
+  margin: 0;
+}
+
+.CartTotal button {
+  padding: 14px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.3);
+}
+.CartTotal button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.45);
+}
+
+/* Promo code card */
+.CartPromoCode {
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.CartPromoCode h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+.CartPromoCode p {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.CartPromoCodeInput {
+  display: flex;
+  gap: 10px;
+}
+.CartPromoCodeInput input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  outline: none;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+.CartPromoCodeInput input::placeholder { color: #475569; }
+.CartPromoCodeInput input:focus { border-color: rgba(249, 115, 22, 0.4); }
+
+.CartPromoCodeInput button {
+  padding: 12px 20px;
+  background: rgba(249, 115, 22, 0.12);
+  color: #f97316;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.CartPromoCodeInput button:hover {
+  background: rgba(249, 115, 22, 0.2);
+  border-color: rgba(249, 115, 22, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .CartBottom { grid-template-columns: 1fr; }
+  .CartItemsTitle {
+    grid-template-columns: 1fr 1.4fr 1fr 1fr 1fr 0.5fr;
+    font-size: 11px;
+  }
+}

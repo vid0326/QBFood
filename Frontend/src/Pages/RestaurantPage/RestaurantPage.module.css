@@ -1,0 +1,442 @@
+/* ===================================================
+   RESTAURANT PROFILE PAGE — Premium Dark UI
+   =================================================== */
+
+.page {
+  min-height: 100vh;
+  background: #0a0a0f;
+  color: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Loading ── */
+.loadingPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #0a0a0f;
+}
+.spinnerWrap {
+  text-align: center;
+  color: #57534e;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(249,115,22,0.15);
+  border-top-color: #f97316;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  height: 420px;
+  overflow: hidden;
+}
+.heroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+.hero:hover .heroImg { transform: scale(1.03); }
+.heroBg { width: 100%; height: 100%; background: linear-gradient(135deg, #1a0a00, #0a0a0f); }
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10,10,15,1) 0%,
+    rgba(10,10,15,0.65) 40%,
+    rgba(10,10,15,0.15) 80%,
+    transparent 100%
+  );
+}
+
+.heroContent {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 32px 5% 28px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #f1f5f9;
+  padding: 7px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, transform 0.2s;
+}
+.backBtn:hover { background: rgba(255,255,255,0.14); transform: translateX(-3px); }
+
+.restName {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  margin: 0 0 12px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+
+.heroBadges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.cuisineBadge {
+  background: rgba(249,115,22,0.18);
+  border: 1px solid rgba(249,115,22,0.35);
+  color: #fb923c;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+  backdrop-filter: blur(6px);
+}
+
+.heroMeta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.ratingBadge, .locationBadge, .openBadge {
+  font-size: 12px;
+  background: rgba(255,255,255,0.07);
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(6px);
+  font-weight: 500;
+}
+.openGreen {
+  color: #4ade80;
+  border-color: rgba(34,197,94,0.25);
+  background: rgba(34,197,94,0.08);
+}
+
+/* ── Photo Strip ── */
+.photoStrip {
+  display: flex;
+  gap: 10px;
+  padding: 14px 5%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: rgba(255,255,255,0.015);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.photoStrip::-webkit-scrollbar { display: none; }
+
+.photoThumb {
+  flex-shrink: 0;
+  width: 88px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.photoThumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photoThumb:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+.photoThumbActive {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.2);
+}
+
+/* ── Tab Nav ── */
+.tabNav {
+  display: flex;
+  padding: 0 5%;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.01);
+  gap: 0;
+  position: sticky;
+  top: 70px;
+  z-index: 10;
+  backdrop-filter: blur(16px);
+}
+.tabBtn {
+  padding: 16px 22px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #57534e;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.tabBtn:hover { color: #a8a29e; }
+.tabBtnActive { color: #f97316; border-bottom-color: #f97316; }
+
+/* ── Body ── */
+.body { padding: 32px 5% 80px; max-width: 1300px; }
+
+/* ── Category Chips ── */
+.catChips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.chip {
+  padding: 7px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 999px;
+  color: #78716c;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.chip:hover {
+  background: rgba(249,115,22,0.08);
+  border-color: rgba(249,115,22,0.25);
+  color: #f97316;
+  transform: translateY(-1px);
+}
+.chipActive {
+  background: linear-gradient(135deg, rgba(249,115,22,0.18), rgba(234,88,12,0.12));
+  border-color: rgba(249,115,22,0.4);
+  color: #f97316;
+  font-weight: 700;
+}
+
+/* ── Menu Grid ── */
+.menuGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 640px)  { .menuGrid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1024px) { .menuGrid { grid-template-columns: 1fr 1fr 1fr; } }
+
+.menuCard {
+  display: flex;
+  background: #16161f;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s, box-shadow 0.2s;
+}
+.menuCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(249,115,22,0.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+}
+
+.menuImgWrap {
+  position: relative;
+  width: 120px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.menuImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  min-height: 100px;
+  transition: transform 0.4s ease;
+}
+.menuCard:hover .menuImg { transform: scale(1.08); }
+.menuCatBadge {
+  position: absolute;
+  top: 6px; left: 6px;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  color: #f97316;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(249,115,22,0.3);
+}
+.menuInfo {
+  flex: 1;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.menuItemName {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 5px;
+  color: #f1f5f9;
+}
+.menuItemDesc {
+  font-size: 11.5px;
+  color: #57534e;
+  line-height: 1.45;
+  margin: 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.menuFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+.menuPrice {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: #f97316;
+}
+.addBtn {
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+  box-shadow: 0 3px 10px rgba(249,115,22,0.3);
+}
+.addBtn:hover { transform: scale(1.05); box-shadow: 0 5px 16px rgba(249,115,22,0.45); }
+
+.qty {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(249,115,22,0.06);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+.qty button {
+  width: 24px;
+  height: 24px;
+  background: rgba(249,115,22,0.1);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 6px;
+  color: #f97316;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.qty button:hover { background: rgba(249,115,22,0.25); }
+.qty span { font-size: 13px; font-weight: 800; min-width: 18px; text-align: center; color: #f97316; }
+
+.emptyMenu {
+  text-align: center;
+  padding: 80px 20px;
+  color: #44403c;
+  font-size: 15px;
+}
+
+/* ── Info Grid ── */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+.infoCard {
+  background: #16161f;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 22px;
+  transition: border-color 0.2s;
+}
+.infoCard:hover { border-color: rgba(249,115,22,0.15); }
+.infoCard h3 {
+  font-size: 11px;
+  font-weight: 800;
+  color: #f97316;
+  margin: 0 0 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.infoCard p { font-size: 14px; color: #a8a29e; margin: 0 0 4px; line-height: 1.55; }
+.cuisineList { display: flex; gap: 8px; flex-wrap: wrap; }
+.cuisineTag {
+  background: rgba(249,115,22,0.08);
+  border: 1px solid rgba(249,115,22,0.2);
+  color: #f97316;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: #78716c;
+}
+.statRow:last-child { border-bottom: none; }
+.statRow strong { color: #f1f5f9; font-weight: 700; }
+
+/* ── Reviews ── */
+.reviewsList { display: flex; flex-direction: column; gap: 14px; }
+.reviewCard {
+  background: #16161f;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+.reviewCard:hover { border-color: rgba(255,255,255,0.1); }
+.reviewHeader {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.reviewAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(249,115,22,0.3);
+}
+.reviewName { font-weight: 700; font-size: 14px; margin: 0 0 2px; }
+.reviewDate { font-size: 11px; color: #57534e; margin: 0; }
+.reviewRating { margin-left: auto; font-size: 15px; display: flex; align-items: center; gap: 4px; }
+.reviewComment { font-size: 14px; color: #78716c; line-height: 1.65; margin: 0; }

@@ -1,0 +1,200 @@
+/* ===== LOGIN POPUP ===== */
+.LoginPopUp {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease;
+}
+
+.LoginPopUpContainer {
+  width: min(440px, 92vw);
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(249, 115, 22, 0.1);
+  animation: fadeInUp 0.3s ease both;
+}
+
+.LoginPopUpTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.LoginPopUpTitle h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.closeBtn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.closeBtn:hover { background: rgba(249, 115, 22, 0.15); }
+.closeBtn img { width: 14px; filter: brightness(0) invert(1); }
+
+.LoginPopUpInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.inputGroup label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.03em;
+}
+.LoginPopUpInputs input {
+  outline: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 13px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.LoginPopUpInputs input::placeholder { color: #475569; }
+.LoginPopUpInputs input:focus {
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.LoginPopUpContainer button[type="submit"] {
+  padding: 14px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.35);
+}
+.LoginPopUpContainer button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.5);
+}
+
+.LoginPopUpConditon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -8px;
+}
+.LoginPopUpConditon input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #f97316;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.LoginPopUpConditon p {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.LoginPopUp p {
+  font-size: 14px;
+  color: #64748b;
+  text-align: center;
+}
+.LoginPopUp p span {
+  color: #f97316;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.LoginPopUp p span:hover { opacity: 0.8; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #334155;
+  font-size: 13px;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Premium Role Selector Toggle */
+.roleSelector {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.roleTab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.roleTab:hover {
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.roleTabActiveCustomer {
+  color: #2dd4bf !important; /* Teal-400 */
+  background: rgba(45, 212, 191, 0.1) !important;
+  border: 1px solid rgba(45, 212, 191, 0.25) !important;
+  box-shadow: 0 0 16px rgba(45, 212, 191, 0.08);
+}
+
+.roleTabActiveOwner {
+  color: #fb923c !important; /* Orange-400 */
+  background: rgba(251, 146, 60, 0.1) !important;
+  border: 1px solid rgba(251, 146, 60, 0.25) !important;
+  box-shadow: 0 0 16px rgba(251, 146, 60, 0.08);
+}
+
+.roleTabActiveDelivery {
+  color: #4ade80 !important; /* Green-400 */
+  background: rgba(74, 222, 128, 0.1) !important;
+  border: 1px solid rgba(74, 222, 128, 0.25) !important;
+  box-shadow: 0 0 16px rgba(74, 222, 128, 0.08);
+}

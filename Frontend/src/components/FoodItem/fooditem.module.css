@@ -1,0 +1,233 @@
+/* ===================================================
+   FOOD ITEM CARD — Premium Redesign
+   =================================================== */
+
+.FoodItem {
+  width: 100%;
+  background: #16161f;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  animation: fadeIn 0.5s ease both;
+  cursor: pointer;
+  position: relative;
+}
+
+.FoodItem:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(249,115,22,0.2);
+  border-color: rgba(249,115,22,0.3);
+}
+
+/* ── Image container ── */
+.FoodItemImageContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+.FoodItemImage {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.FoodItem:hover .FoodItemImage {
+  transform: scale(1.08);
+}
+
+/* Bottom gradient over image */
+.FoodItemImageContainer::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(22,22,31,0.85) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Add / Counter buttons ── */
+.add {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 2;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+  filter: drop-shadow(0 2px 6px rgba(249,115,22,0.3));
+}
+.add:hover {
+  transform: scale(1.18);
+  filter: drop-shadow(0 4px 12px rgba(249,115,22,0.6));
+}
+
+.FoodItemCount {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(22,22,31,0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(249,115,22,0.45);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.FoodItemCount img {
+  width: 26px;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.FoodItemCount img:hover { transform: scale(1.25); }
+.FoodItemCount p {
+  font-weight: 800;
+  font-size: 15px;
+  color: #f97316;
+  min-width: 20px;
+  text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* ── Category chip ── */
+.category {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  padding: 4px 11px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(249,115,22,0.4);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #f97316;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+/* ── 🔥 Hot badge ── */
+.hotBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  padding: 3px 9px;
+  background: rgba(239,68,68,0.2);
+  border: 1px solid rgba(239,68,68,0.4);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fca5a5;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(8px);
+  animation: hotPulse 2s ease-in-out infinite;
+}
+@keyframes hotPulse {
+  0%,100% { box-shadow: 0 0 6px rgba(239,68,68,0.2); }
+  50%      { box-shadow: 0 0 14px rgba(239,68,68,0.5); }
+}
+
+/* ── Info section ── */
+.FoodItemInfo {
+  padding: 16px 18px 20px;
+}
+
+.FoodItemName {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+.FoodItemName p {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.FoodItemName img {
+  width: 64px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* ── Vendor badge ── */
+.vendorBadge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #78716c;
+  margin-bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.03);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: color 0.2s, background 0.2s;
+}
+.vendorBadge:hover {
+  color: #f97316;
+  background: rgba(249,115,22,0.06);
+  border-color: rgba(249,115,22,0.15);
+}
+
+.FoodItemDescription {
+  font-size: 12.5px;
+  color: #57534e;
+  line-height: 1.55;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Footer row ── */
+.FoodItemFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.FoodItemPrice {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #f97316;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* ── In-cart badge ── */
+.inCartBadge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4ade80;
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.2);
+  padding: 3px 10px;
+  border-radius: 999px;
+  animation: fadeIn 0.3s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
