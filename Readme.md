@@ -1,182 +1,394 @@
-# 🍔 QuickBite - Premium Food Ordering & Geofenced Delivery System
-*(Comprehensive Technical Documentation & Presentation Outline)*
+# QuickBite — Full-Stack Food Delivery (Multi-Vendor + Real-Time OTP)
 
-This document is structured to serve as both a comprehensive project documentation and a **ready-to-use outline for your PowerPoint (PPT) presentation**. It covers every workflow, feature, architecture detail, authentication strategy, role implementation, and the complete technical journey of how the platform was built.
+## Team
 
----
+**Ayush · Khairaj · Vidhut**
 
-## 📌 Slide 1: Introduction & Executive Summary
-**QuickBite** is a modern, real-time, multi-vendor food discovery, ordering, and geofenced delivery platform. 
-It orchestrates seamless communication between **Customers, Vendors (Restaurants), Delivery Agents, and Admins** using real-time WebSockets and responsive interfaces.
+## Stack
 
-**Key Highlights:**
-* **Real-time Synchronization:** Powered by Socket.io for live tracking and dispatch.
-* **Geofenced Delivery Engine:** Haversine formula-based tracking with automatic OTP generation within a 100m radius.
-* **Multi-Vendor Ecosystem:** 18 diverse regional restaurants spanning across Dimapur and Chumoukedima.
-* **Automated Finances:** Stripe API integrations with dynamic driver payouts (₹5/km calculated via live coordinates).
+- **Frontend:** React + Vite
+- **Backend:** Node.js + Express
+- **DB:** MongoDB (Mongoose)
+- **Realtime:** Socket.io
+- **Payments:** Stripe (with sandbox fallback)
+- **Auth:** JWT (access + refresh rotation in UI)
 
 ---
 
-## 📌 Slide 2: The Core Tech Stack (MERN + WebSockets)
-We selected the MERN stack coupled with real-time event listeners to provide a highly scalable, non-blocking architecture.
+## 1) System Overview
 
-* **Frontend:** React.js, Context API (Auth, Cart, Filter), CSS/Tailwind, Framer Motion (for animations).
-* **Backend:** Node.js, Express.js (Asynchronous, event-driven).
-* **Database:** MongoDB Atlas with Mongoose ORM (NoSQL allows flexible menu schema scaling).
-* **Real-Time Communication:** Socket.io (Bi-directional WebSockets for GPS and Order State).
-* **Payment Gateway:** Stripe API (Standardized to INR ₹ for secure checkout).
-* **Mapping & Tracking:** Leaflet maps for live GPS plotting.
+QuickBite is a multi-portal delivery platform:
 
----
+```mermaid
+flowchart LR
+  A[Customer Browser + Order + Pay] -->|HTTP (REST) / WebSockets| B[Express API Server]
+  C[Vendor (Restaurant Owner)] -->|HTTP + DB updates| B
+  D[Delivery Agent] -->|HTTP (accept/complete) + WebSockets| B
+  E[(MongoDB)] <-->|Models| B
+  B -->|Socket.io events| A
+  B -->|Socket.io events| D
+```
 
-## 📌 Slide 3: Backend Services & RESTful Routes
-Our backend is structured into modular micro-services to separate business logic and ensure scalability:
+### Main Portal Roles
 
-* **User Service (`/api/user`):**
-  * `POST /register`: Hashes passwords using bcrypt, generates JWT, establishes user profile.
-  * `POST /login`: Validates credentials, issues secure role-based JWT.
-* **Food & Menu Service (`/api/food`):**
-  * `GET /list`: Fetches all active food items.
-  * `POST /add`: Parses multi-part form data via **Multer**, stores image locally in `/uploads`, and saves food metadata in DB.
-* **Order Service (`/api/order`):**
-  * `POST /place`: Integrates with Stripe, returns checkout session URL.
-  * `POST /verify-delivery-otp`: Validates the driver-submitted OTP against the DB.
-* **Delivery Service (`/api/delivery`):**
-  * `GET /orders`: Proximity search for available gigs based on Driver GPS.
-  * `POST /accept`: Locks the gig to a specific driver.
-* **Restaurant Service (`/api/restaurant`):**
-  * `POST /update`: Allows vendors to toggle food availability or update menus.
+- **Customer:** browse → cart → checkout (Stripe) → live tracking → OTP delivery confirmation → chat
+- **Vendor (restaurant_owner):** manages menu + order status updates
+- **Delivery agent (delivery):** accepts orders → navigates → enters OTP within geofence
 
 ---
 
-## 📌 Slide 4: Database Tech Stack & Mongoose Schemas
-We chose MongoDB because its document-oriented structure perfectly handles dynamic menus and hierarchical user roles.
+## 2) Architecture (Request + Event Flow)
 
-* **Users (`userModel.js`):** Unified schema for customers, vendors, drivers, and admins. Stores arrays of addresses and GeoJSON location data.
-* **Restaurants (`restaurantModel.js`):** Stores details, ratings, coordinates (`[longitude, latitude]`), and cuisine types.
-* **Orders (`orderModel.js`):** The central entity. Tracks embedded item arrays, Stripe payment status, geofenced proximity states, and secure verification OTPs.
-* **Delivery Agents (`deliveryAgentModel.js`):** Tracks active assignments, vehicle details, current GPS coordinates, total deliveries, and accumulated earnings.
-
----
-
-## 📌 Slide 5: Authentication & Security Logic (RBAC)
-Authentication is handled via **JSON Web Tokens (JWT)** and **Bcrypt** password hashing. A single unified Auth Middleware verifies the token and dynamically resolves the user's role.
-
-**Business Logic:**
-1. User logs in. Server signs a JWT payload `({ id: user._id, role: user.role })`.
-2. Token is stored in `localStorage` on the frontend.
-3. Every API request passes the token in the `headers`.
-4. Middleware decodes the token, validates expiration, and injects `userId` into the request body.
-
----
-
-## 📌 Slide 6: Business Logic: The Persistent Cart
-Customers browse the platform, add items to a persistent cart, and initiate Stripe checkouts. 
-
-**Business Logic:**
-* **State Management:** React Context API handles local state (`cartItems`) instantly for zero-latency UI updates.
-* **Database Sync:** Behind the scenes, `addToCart` triggers a `POST` request to sync the local state with the user's MongoDB document. If the user switches devices, their cart remains perfectly intact.
-* **Checkout Generation:** Stripe session logic loops through the DB-verified cart items to prevent client-side price manipulation.
-
----
-
-## 📌 Slide 7: Business Logic: Vendor Order Management
-Vendors have a dashboard to manage their specific restaurant. The system maps the logged-in Vendor ID to their specific Restaurant Document.
-
-**Business Logic:**
-1. Vendor receives WebSocket broadcast: `new_order`.
-2. Vendor prepares food and clicks "Out for Delivery".
-3. **Controller Trigger:** The backend updates the DB status and immediately emits a `new_delivery_gig` Socket event to all online drivers whose GPS coordinates are within a predefined geographical radius of the restaurant.
-
----
-
-## 📌 Slide 8: Business Logic: The Geofenced Delivery Engine
-*(The Proximity-Based GPS Tracking Loop)*
-
-This is the crown jewel of QuickBite.
-1. **Haversine Distance Tracking:** The driver's app continuously pulls coordinates via `navigator.geolocation.watchPosition()`. It uses the Haversine formula to calculate the exact spherical distance between the Driver and the Customer.
-2. **Dynamic Payout Calculation:** Distance is multiplied by a base rate of **₹5 per km** (with a minimum payout threshold) to calculate the exact driver earnings dynamically.
-3. **The 100m Geofence Trigger:** The backend continuously monitors the distance. Once distance `<= 100 metres`, the backend securely generates a 6-digit delivery OTP.
-4. **Secure Handshake:** Customer receives the OTP. Driver inputs the OTP on their dashboard. The system verifies it, marks the order "Delivered", automatically credits the dynamic `₹` earnings to the driver's wallet, and resets their status to "Online".
-
----
-
-## 📌 Slide 9: System Architecture Diagram
-*(Use this logic for your PPT flowcharts)*
+### REST APIs (HTTP)
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    actor Customer as 👤 Customer
-    actor Restaurant as 🍳 Restaurant (Vendor)
-    actor Driver as 🛵 Delivery Agent
-    participant Backend as ⚙️ Backend (WebSockets)
+  autonumber
+  participant Client as Browser (React/Vite)
+  participant API as Express API
+  participant DB as MongoDB
 
-    Customer->>Backend: Place Order & Pay (Stripe)
-    Backend->>Restaurant: Broadcast new order
-    Restaurant->>Backend: Mark "Out for Delivery"
-    Backend->>Driver: Broadcast gig to nearby drivers
-    Driver->>Backend: Accept Gig
-    
-    rect rgb(30, 41, 59)
-        Note over Driver, Customer: Real-Time GPS Tracking Loop
-        Driver->>Backend: Active Location Broadcast
-        Backend->>Customer: Sync map marker
-        Backend->>Backend: Proximity check (<= 100m)
-    end
+  Client->>API: Place order (POST /api/order/...)
+  API->>DB: Create order doc
+  API->>API: Stripe checkout session
+  API-->>Client: session URL (or sandbox URL)
+  Client->>API: Verify payment (POST /api/order/...)
+  API->>DB: Update order.payment
+```
 
-    Backend->>Customer: Generate & Send secure 6-digit OTP
-    Customer->>Driver: Hand over OTP code
-    Driver->>Backend: Submit OTP for Verification
-    Backend->>Driver: Confirm Delivery & Add Dynamic Earnings (₹)
+### Realtime Updates (Socket.io)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Cust as Customer
+  participant Vend as Vendor
+  participant Agent as Delivery Agent
+  participant Socket as Socket.io
+
+  Cust->>Socket: join order room
+  Vend->>Socket: updateStatus emits
+  Socket->>Cust: status_update
+
+  Agent->>Socket: update_location loop
+  Socket->>Cust: location_update + otp_ready when within geofence
+  Cust->>Socket: read otp
+  Agent->>Socket: submit otp via API
+  Socket->>Cust: delivery_confirmed + Delivered status
 ```
 
 ---
 
-## 📌 Slide 10: The Multi-Cuisine Ecosystem
-The database is successfully seeded with 18 authentic regional and fast-food restaurants spanning across **Dimapur** and **Chumoukedima**. The items are strictly categorized and paired with high-quality UI asset imagery:
-* **Naga Cuisine:** *Naga Kitchen* (Axone Chicken, Bamboo Shoot Chicken)
-* **Bihari & Rajasthani:** *Bihari Zaika*, *Royal Rajasthani* (Litti Chokha, Dal Bati)
-* **Maharashtrian & Bengali:** *Sonar Bangla* (Machher Jhol)
-* **Salads (Pure Veg):** *The Veg Salad Bowl* (Exclusively Veg Salad)
-* **Sandwiches:** *Sandwich Haven*, *Subway Bites* (Vegan, Grilled, Chicken)
-* **Cakes & Waffles:** *Cake Walk*, *Sweet Tooth Bakery*, *Morning Delight* (Cupcakes, Vegan Cakes, Waffles)
-* **Burgers (No Beef):** *Dimapur Burgers* (Strictly Chicken & Veg Burgers only)
-* **Fried Chicken:** *Cluck Cluck*, *Crunchy Bird* (Crispy Fried Chicken, Spicy Wings, Popcorn)
-* **Fresh Fruits:** *Fresh Picks* (Fresh Fruit Bowls)
-* **Pizza & Biryani:** *Pizza Paradise*, *Hyderabadi House* (Margherita, Chicken BBQ, Veg/Chicken Biryani)
-* **Sushi & Healthy Bowls:** *Tokyo Bites*, *Fit Foods* (Veg/Chicken Sushi, Quinoa, Chicken Salad Bowl)
+## 3) Key Domain Models (Mongoose Schemas)
 
-*Note: All users, vendors, and drivers share a universal testing password: `12345678`. The database is strictly vetted to exclude any Pork, Beef, or Steak items.*
+> **Note:** These are the core schema concepts used across the system.
+
+### User (`userModel.js`)
+
+```js
+{
+  name: String,
+  email: String,
+  password: String,                 // bcrypt hash
+  role: 'customer'|'admin'|'restaurant_owner'|'delivery',
+
+  cartData: Object,                // server-side cart backup
+  addresses: [{
+    label, street, city, state, zipCode, country
+  }],
+
+  currentLocation: {
+    type: 'Point',
+    coordinates: [lng, lat]
+  },
+
+  favorites: [foodId],
+
+  activeToken: String|null,
+  refreshToken: String|null,
+  tokenVersion: Number,
+
+  vehicleDetails: String,         // for delivery agents
+  licensePlate: String,
+  phone: String,
+  profilePic: String,
+
+  loyaltyPoints: Number,
+  isAvailable: Boolean,
+  totalDeliveries: Number
+}
+```
+
+### Restaurant (`restaurantModel.js`)
+
+```js
+{
+  name: String,
+  description: String,
+  ownerId: ObjectId -> user,
+
+  address: { street, city, state, zipCode, country },
+  location: {
+    type: 'Point',
+    coordinates: [lng, lat]
+  },
+
+  rating: Number,
+  cuisineTypes: [String],
+  bannerImage: String,
+  images: [String],
+  isActive: Boolean
+}
+```
+
+### Food (`foodModel.js`)
+
+```js
+{
+  name: String,
+  description: String,
+  price: Number,
+
+  image: String,
+  images: [String],
+
+  category: String,
+  restaurantId: ObjectId -> restaurant,
+
+  dietaryTags: [String],
+  isAvailable: Boolean
+}
+```
+
+### Order (`orderModel.js`)
+
+```js
+{
+  userId: String,
+  items: [
+    {
+      // snapshot of cart item data
+    }
+  ],
+
+  amount: Number,
+  address: Object,
+
+  status: String,                 // e.g., "Food is Getting Ready!", "Out for delivery", "Delivered"
+  date: Date,
+
+  payment: Boolean,
+
+  restaurantId: ObjectId -> restaurant,
+  deliveryAgentId: ObjectId -> user,
+
+  deliveryOTP: String|null,      // 6-digit OTP
+  otpVerified: Boolean,
+  otpGeneratedAt: Date|null
+}
+```
+
+### Delivery Agent (`deliveryAgentModel.js`)
+
+```js
+{
+  userId: ObjectId -> user,
+
+  vehicleDetails: String,
+  currentLocation: {
+    type: 'Point',
+    coordinates: [lng, lat]
+  },
+
+  isAvailable: Boolean,
+  activeOrderId: ObjectId -> order|null,
+
+  totalDeliveries: Number,
+  earnings: Number
+}
+```
+
+### Coupon (`couponModel.js`)
+
+```js
+{
+  code: String,                   // uppercase
+  discountPercentage: Number,
+  maxDiscountAmount: Number,
+  minOrderValue: Number,
+
+  restaurantId: ObjectId|null,
+  usedBy: [userId],             // single-use per user
+
+  expiryDate: Date,
+  isActive: Boolean
+}
+```
+
+### Review (`reviewModel.js`)
+
+```js
+{
+  userId: ObjectId -> user,
+  restaurantId: ObjectId,
+  foodId: ObjectId|null,
+  orderId: ObjectId,
+
+  rating: Number,               // 1..5
+  comment: String,
+  timestamps: true
+}
+```
+
+### Chat (`chatModel.js`)
+
+```js
+{
+  orderId: ObjectId,
+  senderId: ObjectId,
+  senderName: String,
+  role: 'customer'|'delivery',
+
+  text: String,                 // capped length
+  timestamps: true
+}
+```
+
+### Notification (`notificationModel.js`)
+
+```js
+{
+  userId: ObjectId,
+  type: 'order'|'promo'|'system',
+
+  title: String,
+  message: String,
+
+  orderId: ObjectId|null,
+  isRead: Boolean,
+  timestamps: true
+}
+```
 
 ---
 
-## 📌 Slide 11: How We Created It (Development Journey)
-* **Phase 1 (Foundation):** Designed the UI/UX using React and Tailwind/CSS Modules. Focused on responsive layouts and the central StoreContext.
-* **Phase 2 (Backend & DB):** Spun up the Express server and MongoDB clusters. Built out the JWT Auth middleware and bcrypt hashing.
-* **Phase 3 (Role Management):** Segregated the dashboard into 4 portals: Admin, Vendor, Customer, and Driver. Created unique API boundaries for each.
-* **Phase 4 (Sockets & Maps):** Integrated `Socket.io` and `Leaflet`. Built the simulated location tracking script for easy demonstration without needing physical movement.
-* **Phase 5 (Refinement):** Seeded the system with customized Dimapur/Chumoukedima local data, added the dynamic Haversine pricing engine (₹5/km), and strictly enforced the menu categories.
+## 4) Geofenced Delivery + OTP Confirmation
+
+Delivery confirmation is gated by a **distance check** between the agent and the customer.
+
+### Geofence Logic (concept)
+
+```mermaid
+graph TD
+  A[Agent sends update_location (lat,lng)] --> B[Server computes distance to customer]
+  B --> C{distance <= 100m?}
+  C -- yes --> D[Generate OTP (if not already generated)]
+  D --> E[Emit otp_ready to customer]
+  C -- no --> F[Keep tracking]
+  E --> G[Agent submits otp via API]
+  G --> H[Server verifies otp + expiry]
+  H --> I[Mark order Delivered + emit delivery_confirmed]
+```
+
+### OTP Expiry
+
+- OTP becomes invalid after the configured expiry window (10 minutes)
 
 ---
 
-## 📌 Slide 12: Setup & Execution Guide
-*(For Demo Purposes)*
+## 5) Socket Rooms Pattern
 
-**1. Environment:**
-Requires Node.js v18+, MongoDB Atlas, and Stripe API Keys.
+Each order has a dedicated room:
 
-**2. Startup Commands:**
-* **Backend:** `cd Backend && npm install && npm run server`
-* **Frontend:** `cd Frontend && npm install && npm run dev`
-* **Admin:** `cd admin && npm install && npm run dev`
+- Room: `order_{orderId}`
+- Customer and delivery agent join for the specific order.
 
-**3. Running the Simulation:**
-To easily demonstrate the app without driving around:
-1. Driver accepts order.
-2. Click **Go to Restaurant**.
-3. Click **Deliver Food** step-by-step. The GPS distance indicator will decrement sequentially.
-4. At `< 100m`, the OTP triggers automatically!
+```mermaid
+flowchart LR
+  X[Customer UI] --> R[Socket Room: order_{orderId}]
+  Y[Vendor updates via REST] --> Z[Server emits status_update]
+  Z --> R
+  W[Delivery agent UI] --> R
+```
 
 ---
-*Crafted for the QuickBite Presentation Deck.*
+
+## 6) Recommendations (Personalized + Nearby)
+
+The recommendation engine combines:
+
+- user order history (category counts)
+- restaurant proximity (MongoDB `$near` using geo index)
+
+```mermaid
+flowchart TD
+  A[User request personalized] --> B[Fetch user's past orders]
+  B --> C[Extract top categories]
+  C --> D[Geo query nearby restaurants]
+  D --> E[Query food items by categories]
+  E --> F[Backfill with generic nearby items if needed]
+  F --> G[Return up to 10 items]
+```
+
+---
+
+## 7) Payment Flow (Stripe + Fallback)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Client as Customer
+  participant API as Express
+  participant Stripe as Stripe
+
+  Client->>API: Place order
+  API->>API: Create order doc
+  API->>Stripe: checkout.sessions.create()
+  Stripe-->>API: session URL
+  API-->>Client: Redirect to Stripe session
+
+  alt Stripe key invalid / sandbox fallback
+    API-->>Client: Redirect to /stripe-sandbox
+  end
+
+  Client->>API: Verify (success=true/false)
+  API->>API: Update order.payment + award loyalty points
+```
+
+---
+
+## 8) Demo Checklist (Quick Walkthrough)
+
+1. Start **Backend**
+2. Start **Frontend**
+3. Register / login as **Customer**
+4. Place an order (Stripe session / sandbox)
+5. Vendor updates status
+6. Delivery agent accepts
+7. Agent approaches customer → OTP emitted
+8. Delivery agent submits OTP → Delivered confirmation + earnings update
+9. Customer sees realtime tracking + notifications
+
+---
+
+## 9) Setup Notes
+
+- Configure `.env` for:
+  - `MONGODB_URI`
+  - `JWT_SECRET`
+  - `STRIPE_SECRET_KEY` (and optionally webhook/URLs depending on your setup)
+- Start Backend then Frontend.
+
+---
+
+## Project Summary
+
+QuickBite delivers a full-stack experience with:
+
+- multi-vendor food platform
+- real-time order tracking
+- geofenced OTP delivery confirmation
+- Stripe payments (with sandbox fallback)
+- role-based portals (customer/vendor/delivery)
+- loyalty points + notifications
+- chat per order
