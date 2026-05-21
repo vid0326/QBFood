@@ -8,16 +8,16 @@
 
 - **Frontend:** React + Vite
 - **Backend:** Node.js + Express
-- **DB:** MongoDB (Mongoose)
-- **Realtime:** Socket.io
+- **Database:** MongoDB (Mongoose)
+- **Real-time:** Socket.io
 - **Payments:** Stripe (with sandbox fallback)
-- **Auth:** JWT (access + refresh rotation in UI)
+- **Auth:** JWT (access + refresh token rotation in UI)
 
 ---
 
 ## 1) System Overview
 
-QuickBite is a multi-portal delivery platform:
+QuickBite is a multi-portal food delivery platform:
 
 ```mermaid
 flowchart LR
@@ -31,9 +31,9 @@ flowchart LR
 
 ### Main Portal Roles
 
-- **Customer:** browse → cart → checkout (Stripe) → live tracking → OTP delivery confirmation → chat
-- **Vendor (restaurant_owner):** manages menu + order status updates
-- **Delivery agent (delivery):** accepts orders → navigates → enters OTP within geofence
+- **Customer:** Browse → cart → checkout (Stripe) → live tracking → OTP delivery confirmation → chat
+- **Vendor (restaurant_owner):** Manages menu and order status updates
+- **Delivery Agent (delivery):** Accepts orders → navigates → enters OTP within the geofence
 
 ---
 
@@ -49,14 +49,14 @@ sequenceDiagram
   participant DB as MongoDB
 
   Client->>API: Place order (POST /api/order/...)
-  API->>DB: Create order doc
+  API->>DB: Create order document
   API->>API: Stripe checkout session
-  API-->>Client: session URL (or sandbox URL)
+  API-->>Client: Session URL (or sandbox URL)
   Client->>API: Verify payment (POST /api/order/...)
-  API->>DB: Update order.payment
+  API->>DB: Update order payment status
 ```
 
-### Realtime Updates (Socket.io)
+### Real-Time Updates (Socket.io)
 
 ```mermaid
 sequenceDiagram
@@ -66,14 +66,14 @@ sequenceDiagram
   participant Agent as Delivery Agent
   participant Socket as Socket.io
 
-  Cust->>Socket: join order room
+  Cust->>Socket: Join order room
   Vend->>Socket: updateStatus emits
   Socket->>Cust: status_update
 
   Agent->>Socket: update_location loop
   Socket->>Cust: location_update + otp_ready when within geofence
-  Cust->>Socket: read otp
-  Agent->>Socket: submit otp via API
+  Cust->>Socket: Read OTP
+  Agent->>Socket: Submit OTP via API
   Socket->>Cust: delivery_confirmed + Delivered status
 ```
 
@@ -218,7 +218,7 @@ sequenceDiagram
   minOrderValue: Number,
 
   restaurantId: ObjectId|null,
-  usedBy: [userId],             // single-use per user
+  usedBy: [userId],              // single-use per user
 
   expiryDate: Date,
   isActive: Boolean
@@ -274,9 +274,9 @@ sequenceDiagram
 
 ## 4) Geofenced Delivery + OTP Confirmation
 
-Delivery confirmation is gated by a **distance check** between the agent and the customer.
+Delivery confirmation is controlled through a **distance check** between the delivery agent and the customer.
 
-### Geofence Logic (concept)
+### Geofence Logic (Concept)
 
 ```mermaid
 graph TD
@@ -284,15 +284,15 @@ graph TD
   B --> C{distance <= 100m?}
   C -- yes --> D[Generate OTP (if not already generated)]
   D --> E[Emit otp_ready to customer]
-  C -- no --> F[Keep tracking]
-  E --> G[Agent submits otp via API]
-  G --> H[Server verifies otp + expiry]
-  H --> I[Mark order Delivered + emit delivery_confirmed]
+  C -- no --> F[Continue tracking]
+  E --> G[Agent submits OTP via API]
+  G --> H[Server verifies OTP + expiry]
+  H --> I[Mark order as Delivered + emit delivery_confirmed]
 ```
 
 ### OTP Expiry
 
-- OTP becomes invalid after the configured expiry window (10 minutes)
+- The OTP becomes invalid after the configured expiry window (10 minutes).
 
 ---
 
@@ -301,7 +301,7 @@ graph TD
 Each order has a dedicated room:
 
 - Room: `order_{orderId}`
-- Customer and delivery agent join for the specific order.
+- The customer and delivery agent join the room for that specific order.
 
 ```mermaid
 flowchart LR
@@ -317,15 +317,15 @@ flowchart LR
 
 The recommendation engine combines:
 
-- user order history (category counts)
-- restaurant proximity (MongoDB `$near` using geo index)
+- User order history (category counts)
+- Restaurant proximity (MongoDB `$near` using a geospatial index)
 
 ```mermaid
 flowchart TD
-  A[User request personalized] --> B[Fetch user's past orders]
+  A[User requests personalized recommendations] --> B[Fetch user's past orders]
   B --> C[Extract top categories]
   C --> D[Geo query nearby restaurants]
-  D --> E[Query food items by categories]
+  D --> E[Query food items by category]
   E --> F[Backfill with generic nearby items if needed]
   F --> G[Return up to 10 items]
 ```
@@ -342,9 +342,9 @@ sequenceDiagram
   participant Stripe as Stripe
 
   Client->>API: Place order
-  API->>API: Create order doc
+  API->>API: Create order document
   API->>Stripe: checkout.sessions.create()
-  Stripe-->>API: session URL
+  Stripe-->>API: Session URL
   API-->>Client: Redirect to Stripe session
 
   alt Stripe key invalid / sandbox fallback
@@ -359,15 +359,15 @@ sequenceDiagram
 
 ## 8) Demo Checklist (Quick Walkthrough)
 
-1. Start **Backend**
-2. Start **Frontend**
-3. Register / login as **Customer**
+1. Start the **Backend**
+2. Start the **Frontend**
+3. Register/Login as a **Customer**
 4. Place an order (Stripe session / sandbox)
-5. Vendor updates status
-6. Delivery agent accepts
-7. Agent approaches customer → OTP emitted
-8. Delivery agent submits OTP → Delivered confirmation + earnings update
-9. Customer sees realtime tracking + notifications
+5. Vendor updates the order status
+6. Delivery agent accepts the order
+7. Agent approaches the customer → OTP emitted
+8. Delivery agent submits OTP → Delivery confirmed + earnings updated
+9. Customer sees real-time tracking + notifications
 
 ---
 
@@ -376,8 +376,8 @@ sequenceDiagram
 - Configure `.env` for:
   - `MONGODB_URI`
   - `JWT_SECRET`
-  - `STRIPE_SECRET_KEY` (and optionally webhook/URLs depending on your setup)
-- Start Backend then Frontend.
+  - `STRIPE_SECRET_KEY` (and optionally webhook URLs depending on your setup)
+- Start the Backend first, then the Frontend.
 
 ---
 
@@ -385,10 +385,11 @@ sequenceDiagram
 
 QuickBite delivers a full-stack experience with:
 
-- multi-vendor food platform
-- real-time order tracking
-- geofenced OTP delivery confirmation
+- Multi-vendor food platform
+- Real-time order tracking
+- Geofenced OTP delivery confirmation
 - Stripe payments (with sandbox fallback)
-- role-based portals (customer/vendor/delivery)
-- loyalty points + notifications
-- chat per order
+- Role-based portals (customer/vendor/delivery)
+- Loyalty points + notifications
+- Chat support per order
+
